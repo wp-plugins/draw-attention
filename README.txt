@@ -1,6 +1,6 @@
 === Draw Attention ===
 Contributors: tylerdigital, nataliemac, croixhaug
-Tags: interactive images, image maps, highlightable areas, call to action, product images, trade shows, floor plans, virtual tour
+Tags: interactive images, image maps, highlightable areas, highlight images, product images, trade shows, floor plans, virtual tour, call to action
 Requires at least: 4.1
 Tested up to: 4.1
 Stable tag: 1.0.1
@@ -37,7 +37,7 @@ When a highlighted map area is clicked, show more information.
 
 [vimeo https://vimeo.com/118974102]
 
-[Upgrade to Draw Attention Pro](http://tylerdigital.com/products/draw-attention/) to get more features and customization.
+[Upgrade to Draw Attention Pro](http://wpdrawattention.com/) to get more features and customization.
 
 == Installation ==
 
