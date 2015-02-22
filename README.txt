@@ -7,7 +7,7 @@ Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A WordPress plugin for creating interactive images
+Create interactive images in WordPress. Perfect for floor plans, trade shows, photo tagging, product features, and tutorials.
 
 == Description ==
 
@@ -73,8 +73,17 @@ The Pro version includes:
 - Custom layout options (change position of more info box or use a lightbox)
 
 == Screenshots ==
+1. Draw your highlightable areas right in the dasbhoard
+2. Site visitors can click to learn more about your highlighted areas
+3. Upload a floor plan and show detail photos for each room
+4. Customize the colors and appearance of the highlighted areas
+5. Customize the colors and appearance of the highlighted areas
+
 
 == Changelog ==
+
+= 1.1 =
+Change Draw Attention CPT icon in dashboard
 
 = 1.0.2 =
 Fix issue with saving data
