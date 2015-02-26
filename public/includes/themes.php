@@ -24,14 +24,24 @@ class DrawAttention_Themes {
 		<?php
 	}
 
-	function pass_themes_to_admin_js() {
+	public function pass_themes_to_admin_js() {
 		wp_localize_script( $this->parent->plugin_slug . '-admin-script', 'daThemes', array(
 			'cfPrefix' => $this->parent->custom_fields->prefix,
 			'themes' => $this->get_themes(),
 		) );
 	}
 
-	function get_themes() {
+	public static function apply_theme( $post_id, $theme_slug ) {
+		$themes = self::get_themes();
+		if ( empty( $themes[$theme_slug]['values'] ) ) { return false; }
+
+		foreach ($themes[$theme_slug]['values'] as $key => $meta_value) {
+			update_post_meta( $post_id, '_da_'.$key, $meta_value );
+			// TODO: Make prefix dynamic
+		}
+	}
+
+	public static function get_themes() {
 		$themes = array(
 			'light' => array(
 				'slug' => 'light',
@@ -65,6 +75,23 @@ class DrawAttention_Themes {
 					'map_background_color' => '#000000',
 				),
 			),
+			'drawattention' => array(
+				'slug' => 'drawattention',
+				'name' => 'Draw Attention',
+				'values' => array(
+					'map_highlight_color' => '#3CA2A2',
+					'map_highlight_opacity' => 0.7,
+
+					'map_border_color' => '#235B6E',
+					'map_border_opacity' => 1,
+					'map_border_width' => 2,
+
+					'map_title_color' => '#93C7A4',
+					'map_text_color' => '#DFEBE5',
+					'map_background_color' => '#2E2D29',
+				),
+			),
+
 		);
 
 		return apply_filters( 'da_themes', $themes );
