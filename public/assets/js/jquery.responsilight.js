@@ -110,11 +110,21 @@
 
       $this.hover(
         function(){ mapOver($this, img); },
-        function(){ mapOut($this); }
-      )
-      .on('click', function(){
-        mapClick($(this), img);
-      });
+        function(){ mapOut($this, img); }
+      );
+
+      if (opts.eventTrigger == 'click') {
+        $this.off('click').on('click', function(e){
+          e.preventDefault();
+          mapClick($(this), img);
+        });
+      }
+
+      if ($this.data('stickyCanvas')) {
+        mapOver($this, img);
+        img.siblings('canvas').addClass('sticky-canvas');
+      }
+
     });
   };
 
@@ -173,6 +183,10 @@
       Object.defineProperty(dataOpts, 'highlightBorderOpacity', {value : img.data('highlight-border-opacity')});
     }
 
+    if (img.data('event-trigger') !== '') {
+      Object.defineProperty(dataOpts, 'eventTrigger', {value : img.data('event-trigger')});
+    }
+
     opts = $.extend(dataOpts, $.fn.responsilight.defaults);
   }
 
@@ -217,8 +231,8 @@
         }
         $this.attr(c, coordsPercent.toString());
       });
+      drawIt(img, map);
     }).attr('src', $image.attr('src'));
-    drawIt(img, map);
   };
 
   mapOver = function(area, img) {
@@ -266,8 +280,6 @@
       }
     }
 
-    drawOptions(img);
-
     if(shape == 'poly') {
       drawPoly(context, xCoords, yCoords);
     } else if(shape == 'circle') {
@@ -281,7 +293,7 @@
     img.trigger('showHighlight', [href]);
   };
 
-  mapOut = function(area) {
+  mapOut = function(area, img) {
     var id = area.attr('id'),
       canvas = $('#canvas-' + id);
 
@@ -290,6 +302,8 @@
         canvas.remove();
       });
     }
+    img.trigger('removeHighlight');
+
   };
 
   mapClick = function(area, img) {
@@ -300,7 +314,9 @@
 
     if (stickyCanvas.length == 0) {
       mapOver(area, img);
+      stickyCanvas = $('#canvas-' + id);
     }
+
 
     if (isSticky) {
       area.data('stickyCanvas', false);
@@ -310,10 +326,10 @@
       });
     } else {
       area.data('stickyCanvas', true);
-      stickyCanvas.addClass('sticky');
+      stickyCanvas.addClass('sticky-canvas');
       img.trigger('activateHighlight', [href]);
       area.trigger('stickyHighlight', [true]);
-      stickyCanvas.siblings('canvas.sticky').stop(true, true).fadeOut('fast', function(){
+      stickyCanvas.siblings('canvas.sticky-canvas').stop(true, true).fadeOut('fast', function(){
         $(this).remove();
       });
       area.siblings('area').data('stickyCanvas', false);
@@ -344,7 +360,7 @@
         var $this = $(this),
           $mapName = $this.attr('usemap').replace('#', ''),
           $map = $('map[name="' + $mapName + '"]');
-
+        drawOptions($this);
         resizeImageMap($(this), $map);
       });
     }
@@ -363,7 +379,8 @@
     highlightOpacity: '0.5',
     highlightBorderColor: '#000000',
     highlightBorderWidth: 1,
-    highlightBorderOpacity: '1'
+    highlightBorderOpacity: '1',
+    eventTrigger: 'click'
   }
 
 }(jQuery, window, document));
