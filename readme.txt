@@ -66,7 +66,8 @@ Choose from one of 20 pre-defined color palettes or use your own custom color sc
 
 = What's added in Draw Attention Pro? =
 
-The Pro version includes:
+**The Pro version includes:**
+
 - Ability to create more than 1 interactive image
 - Unlimited number of highlightable areas for each image
 - 20 preset color schemes
@@ -78,7 +79,6 @@ The Pro version includes:
 3. Upload a floor plan and show detail photos for each room
 4. Customize the colors and appearance of the highlighted areas
 5. 
-
 
 == Changelog ==
 
@@ -93,22 +93,22 @@ The Pro version includes:
 * Fixed: Conflict with some themes causing highlighted areas to "jump" when clicked
 
 = 1.1.3 =
-* Fix: Default color scheme always applying when re-editing an existing image
+* Fixed: Default color scheme always applying when re-editing an existing image
 
 = 1.1.2 =
-* Fix: PHP Warnings when PHP is in Strict Standards mode
+* Fixed: PHP Warnings when PHP is in Strict Standards mode
 
 = 1.1.1 =
 * New: Add ability "click off" highlighted areas
 * New: Add confirmation alert before deleting highlightable area in the dashboard
 * New: CPT icon in dashboard
 * New: Set a default color scheme when activating Draw Attention
-* Fix: default layout to show More Info on Left rather than on top
-* Fix: PHP Warnings visible with WP_Debug
-* Fix: issues with selected highlight color not always displaying properly
+* Fixed: default layout to show More Info on Left rather than on top
+* Fixed: PHP Warnings visible with WP_Debug
+* Fixed: issues with selected highlight color not always displaying properly
 
 = 1.0.2 =
-Fix issue with saving data
+* Fixed: issue with saving data
 
 = 1.0 =
 * Initial Release
