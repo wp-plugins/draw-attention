@@ -60,6 +60,13 @@
   drawIt = function(img, map) {
     if(hasCanvas && hasPointerEvents) {
       drawCanvas(img, map);
+    } else {
+      map.find('area')
+        .on('click', function(e){
+          var area = $(this);
+          e.preventDefault();
+          area.trigger('stickyHighlight', [true]);
+        });
     }
   };
 
@@ -365,7 +372,7 @@
       });
     }
 
-    $(window).resize(function() {
+    $(window).on('resize orientationchange', function() {
       resizeDelay(function() {
         responsilight_init();
       }, 300, 'responsilight');
