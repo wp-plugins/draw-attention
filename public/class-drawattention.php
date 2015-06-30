@@ -31,7 +31,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 		 *
 		 * @var     string
 		 */
-		const VERSION = '1.3';
+		const VERSION = '1.4';
 		const file = __FILE__;
 		const name = 'Draw Attention';
 		const slug = 'drawattention';
@@ -329,7 +329,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 				also security implications to running outdated PHP versions. If you contact us at <a href='mailto: support@tylerdigital.com'>support@tylerdigital.com</a> we'll be happy to provide
 				you with a list of hosts who run PHP 5.3+ and will help you migrate your site from your current hosting provider.</p>
 				<h4>Additional info:</h4>
-				<ul> 
+				<ul>
 					<li><a href='http://w3techs.com/technologies/details/pl-php/5/all'>http://w3techs.com/technologies/details/pl-php/5/all</a></li>
 					<li><a href='http://php.net/releases/'>http://php.net/releases/</a></li>
 				</ul>
@@ -359,6 +359,9 @@ if ( !class_exists( 'DrawAttention' ) ) {
 			wp_reset_query();
 
 			$hotspots = get_post_meta( $imageID, $this->custom_fields->prefix.'hotspots', true );
+			$url_hotspots = array();
+			$urls_only = false;
+			$urls_class = '';
 			$html = '';
 
 			if ( empty( $hotspots ) || empty( $hotspots['0']['coordinates'] ) ) {
@@ -366,7 +369,12 @@ if ( !class_exists( 'DrawAttention' ) ) {
 				echo ' ';
 				echo edit_post_link( __( 'Edit Image', 'drawattention' ), false, false, $imageID );
 			} else {
-				$img_url = wp_get_attachment_url( get_post_thumbnail_id( $imageID ));
+				$img_src = wp_get_attachment_image_src( get_post_thumbnail_id( $imageID ), 'full' );
+
+				$img_url = $img_src[0];
+				$img_width = $img_src[1];
+				$img_height = $img_src[2];
+
 				$img_post = get_post( $imageID );
 
 				$settings = get_metadata( 'post', $imageID, '', false );
@@ -392,36 +400,68 @@ if ( !class_exists( 'DrawAttention' ) ) {
 
 				$image_html = '';
 				$image_html .=    '<div class="hotspots-image-container">';
-				$image_html .=      '<img src="' . $img_url . '" class="hotspots-image" usemap="#hotspots-image-' . $imageID . '" data-event-trigger="click" data-highlight-color="' . $settings[$this->custom_fields->prefix.'map_highlight_color'][0] . '" data-highlight-opacity="' . $settings[$this->custom_fields->prefix.'map_highlight_opacity'][0] . '" data-highlight-border-color="' . $settings[$this->custom_fields->prefix.'map_border_color'][0] . '" data-highlight-border-width="' . $settings[$this->custom_fields->prefix.'map_border_width'][0] . '" data-highlight-border-opacity="' . $settings[$this->custom_fields->prefix.'map_border_opacity'][0] . '"/>';
+				$image_html .=      '<img width="' . $img_width . '" height= "' . $img_height . '" src="' . $img_url . '" class="hotspots-image" usemap="#hotspots-image-' . $imageID . '" data-event-trigger="click" data-highlight-color="' . $settings[$this->custom_fields->prefix.'map_highlight_color'][0] . '" data-highlight-opacity="' . $settings[$this->custom_fields->prefix.'map_highlight_opacity'][0] . '" data-highlight-border-color="' . $settings[$this->custom_fields->prefix.'map_border_color'][0] . '" data-highlight-border-width="' . $settings[$this->custom_fields->prefix.'map_border_width'][0] . '" data-highlight-border-opacity="' . $settings[$this->custom_fields->prefix.'map_border_opacity'][0] . '"/>';
 				$image_html .=    '</div>';
 
 				$info_html = '';
 				$info_html .=    '<div class="hotspots-placeholder" id="content-hotspot-' . $imageID . '">';
 				$info_html .=      '<div class="hotspot-initial">';
 				$info_html .=        '<h2 class="hotspot-title">' . get_the_title( $imageID ) . '</h2>';
-				$more_info_html = ( !empty( $settings[$this->custom_fields->prefix.'map_more_info'][0]) ) ? wpautop($settings[$this->custom_fields->prefix.'map_more_info'][0]) : '';
+				$more_info_html = ( !empty( $settings[$this->custom_fields->prefix.'map_more_info'][0]) ) ? ( apply_filters( 'the_content', $settings[$this->custom_fields->prefix.'map_more_info'][0] ) ) : '';
 				$info_html .=        '<div class="hostspot-content">' . $more_info_html . '</div>';
 				$info_html .=      '</div>';
 				$info_html .=    '</div>';
 
+				$map_html = '';
+				$map_html .=    '<map name="hotspots-image-' . $imageID . '" class="hotspots-map">';
+				foreach ($hotspots as $key => $hotspot) {
+					if ( empty( $hotspot['coordinates'] ) ) { continue; }
+					$target = '';
+					if( !empty( $hotspot[ 'action' ] ) ) {
+						$target = $hotspot['action'];
+					}
+					$new_window = '';
+					$target_window = '';
+					if ( !empty( $hotspot[ 'action-url-open-in-window' ] ) ) {
+						$new_window = $hotspot[ 'action-url-open-in-window' ];
+						$target_window = ( $new_window == 'on' ? '_new' : '' );
+					}
+					$target_url = '';
+					if ( !empty( $hotspot[ 'action-url-url' ] ) ) {
+						$target_url = $hotspot[ 'action-url-url' ];
+					}
 
-				$html .=  '<div class="hotspots-container ' . $layout . ' event-click' .'" id="' . $spot_id . '">';
+					$area_class = ( $target == 'url' ) ? 'url-area' : 'more-info-area';
+
+					$href = ( $target == 'url' ) ? $target_url : '#hotspot-' . $key;
+
+					$coords = $hotspot['coordinates'];
+					$map_html .= '<area shape="poly" coords="' . $coords . '" href="' . $href . '" title="' . $hotspot['title'] . '" data-action="'. $target . '" target="' . $target_window . '" class="' . $area_class . '">';
+					if ( $target == 'url' ) {
+						$url_hotspots[] = $hotspot;
+					}
+				}
+
+				if ( count( $hotspots ) == count( $url_hotspots ) ) {
+					$urls_only = true;
+					$urls_class = 'links-only';
+				}
+
+				$map_html .=    '</map>';
+
+				$html .=  '<div class="hotspots-container ' . $urls_class . ' ' . $layout . ' event-click' .'" id="' . $spot_id . '">';
 				$html .=		'<div class="hotspots-interaction">';
 
-				$html .= $info_html;
-				$html .= $image_html;
+				if ( $urls_only ) {
+					$html .= $image_html;
+				} else {
+					$html .= $info_html;
+					$html .= $image_html;
+				}
 
 				$html .=		'</div>'; /* End of interaction div that wraps the text area and image only */
 
-				$html .=    '<map name="hotspots-image-' . $imageID . '" class="hotspots-map">';
-				foreach ($hotspots as $key => $hotspot) {
-					if ( empty( $hotspot['coordinates'] ) ) { continue; }
-
-					$coords = $hotspot['coordinates'];
-					$html .= '<area shape="poly" coords="' . $coords . '" href="#hotspot-' . $key . '">';
-				}
-
-				$html .=    '</map>';
+				$html .= $map_html;
 
 				foreach ($hotspots as $key => $hotspot) {
 					$html .=  '<div class="hotspot-info" id="hotspot-' . $key . '">';
@@ -433,7 +473,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 						$html .=    wp_get_attachment_image( $hotspot['detail_image_id'], apply_filters( 'da_detail_image_size', 'medium', $hotspot, $img_post, $settings ) );
 						$html .=  '</div>';
 					}
-					$description_html = ( !empty( $hotspot['description'] ) ) ? wpautop( $hotspot['description'] ) : '';
+					$description_html = ( !empty( $hotspot['description'] ) ) ? apply_filters( 'the_content', ( $hotspot['description'] ) ) : '';
 					$html .=    '<div class="hotspot-content">' . $description_html . '</div>';
 					$html .=  '</div>';
 				}
