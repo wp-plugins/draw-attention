@@ -67,6 +67,7 @@
 	drawIt = function(img, map) {
 		if(doHighlights) {
 			prepImage(img, map);
+			linkToHotspot(img, map);
 		} else {
 			simpleMap(map);
 		}
@@ -181,6 +182,7 @@
 
 	var resizeImageMap,
 		imageEvents,
+		linkToHotspot,
 		mapOver,
 		mapOut,
 		mapClick,
@@ -261,6 +263,49 @@
 				}
 			});
 		});
+	};
+
+	linkToHotspot = function(img, map) {
+		var hash = window.location.hash;
+
+		if (hash) {
+			var area = map.find('area[href="' + hash + '"]');
+			if ( area.length ) {
+				var imgTop = img.offset().top,
+					coords = area.attr('coords').split(','),
+					yCoords = [];
+
+				for(var i=0; i<coords.length; i++) {
+					if(i%2 != 0) {
+						yCoords.push(coords[i]);
+					}
+				}
+
+				var areaImgTop = Math.min.apply(Math, yCoords),
+					areaImgBottom = Math.max.apply(Math, yCoords),
+					windowHeight = $(window).height(),
+					windowBottom = imgTop + windowHeight,
+					areaBottom = imgTop + areaImgBottom,
+					areaTop = imgTop + areaImgTop,
+					padding = 50,
+					scrollCoord;
+
+				if (areaBottom > windowBottom) {
+					scrollCoord = imgTop + (areaBottom - windowBottom) + padding;
+					if ((areaBottom-areaTop) > windowHeight) {
+						scrollCoord = areaTop - padding;
+					}
+				} else {
+					scrollCoord = imgTop - padding;
+				}
+
+				mapOver(area, img, null);
+				mapClick(area, img);
+				setTimeout(function() {
+    			window.scrollTo(0, scrollCoord);
+  			}, 1);
+			}
+		}
 	};
 
 	mapOver = function(area, img, type) {
@@ -420,8 +465,8 @@
 					$mapName = $this.attr('usemap').replace('#', ''),
 					$map = $('map[name="' + $mapName + '"]');
 				drawOptions($this);
-				imageEvents($(this), $map);
-				resizeImageMap($(this), $map);
+				imageEvents($this, $map);
+				resizeImageMap($this, $map);
 			});
 		}
 

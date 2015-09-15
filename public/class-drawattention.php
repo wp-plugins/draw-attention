@@ -31,7 +31,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 		 *
 		 * @var     string
 		 */
-		const VERSION = '1.4.5';
+		const VERSION = '1.5.2';
 		const file = __FILE__;
 		const name = 'Draw Attention';
 		const slug = 'drawattention';
@@ -382,10 +382,19 @@ if ( !class_exists( 'DrawAttention' ) ) {
 
 
 				$spot_id = 'hotspot-' . $imageID;
-				$bg_color = $settings[$this->custom_fields->prefix.'map_background_color'][0];
-				$text_color = $settings[$this->custom_fields->prefix.'map_text_color'][0];
-				$title_color = $settings[$this->custom_fields->prefix.'map_title_color'][0];
+				$bg_color = ( !empty( $settings[$this->custom_fields->prefix.'map_background_color'][0] ) ) ? $settings[$this->custom_fields->prefix.'map_background_color'][0] : '';
+				$text_color = ( !empty( $settings[$this->custom_fields->prefix.'map_text_color'][0] ) ) ? $settings[$this->custom_fields->prefix.'map_text_color'][0] : '';
+				$title_color = ( !empty( $settings[$this->custom_fields->prefix.'map_title_color'][0] ) ) ? $settings[$this->custom_fields->prefix.'map_title_color'][0] : '';
+				$image_background_color = ( !empty( $settings[$this->custom_fields->prefix.'image_background_color'][0] ) ) ? $settings[$this->custom_fields->prefix.'image_background_color'][0] : '';
+				if ( empty( $image_background_color ) ) {
+					$image_background_color = '#efefef';
+				}
+
 				$custom_css = "
+					#{$spot_id} .hotspots-image-container {
+						background: {$image_background_color};
+					}
+
 					#{$spot_id} .hotspots-placeholder,
 					.featherlight .featherlight-content.lightbox{$imageID} {
 						background: {$bg_color};
