@@ -3,7 +3,7 @@ Contributors: tylerdigital, nataliemac, croixhaug
 Tags: interactive images, image maps, highlightable areas, highlight images, product images, conferences, conventions, trade shows, floor plans, virtual tour, call to action, real estate, responsive, responsive image map
 Requires at least: 3.5.1
 Tested up to: 4.3
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,9 @@ Choose from one of 20 pre-defined color palettes or use your own custom color sc
 5.
 
 == Changelog ==
+
+= 1.5.3 =
+* Fixed: Conflict between post ID and hotspot ID caused image to disappear when clicking hotspot
 
 = 1.5.2 =
 * Fixed: Incompatibility with 3rd party theme/plugin javascript in the admin

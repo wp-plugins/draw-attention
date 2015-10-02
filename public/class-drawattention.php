@@ -31,7 +31,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 		 *
 		 * @var     string
 		 */
-		const VERSION = '1.5.2';
+		const VERSION = '1.5.3';
 		const file = __FILE__;
 		const name = 'Draw Attention';
 		const slug = 'drawattention';
@@ -443,7 +443,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 
 					$area_class = ( $target == 'url' ) ? 'url-area' : 'more-info-area';
 
-					$href = ( $target == 'url' ) ? $target_url : '#hotspot-' . $key;
+					$href = ( $target == 'url' ) ? $target_url : '#hotspot-' . $spot_id . '-' . $key;
 
 					$coords = $hotspot['coordinates'];
 					if ( empty( $hotspot['title'] ) ) {
@@ -477,7 +477,7 @@ if ( !class_exists( 'DrawAttention' ) ) {
 				$html .= $map_html;
 
 				foreach ($hotspots as $key => $hotspot) {
-					$html .=  '<div class="hotspot-info" id="hotspot-' . $key . '">';
+					$html .=  '<div class="hotspot-info" id="hotspot-' . $spot_id . '-' . $key . '">';
 					if ( !empty( $hotspot['title'] ) ) {
 						$html .=    '<h2 class="hotspot-title">' . $hotspot['title'] . '</h2>';
 					}
